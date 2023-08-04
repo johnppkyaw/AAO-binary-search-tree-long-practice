@@ -45,19 +45,78 @@ function findMaxBT (rootNode) {
 }
 
 function getHeight (rootNode) {
-  // Your code here
+  if(rootNode === null) return -1;
+  if(rootNode.left === null && rootNode.right === null) return 0;
+  let left = 0;
+  let right = 0;
+  if(rootNode.left) {
+    left += getHeight(rootNode.left) + 1;
+  }
+  if(rootNode.right) {
+    right += getHeight(rootNode.right) + 1;
+  }
+  if(left > right) return left;
+  else return right;
 }
 
 function balancedTree (rootNode) {
-  // Your code here
+  const currentNode = rootNode;
+  const stack = [];
+  stack.push(currentNode);
+
+  //Breadth first traversal
+  while(stack.length > 0) {
+    const poppedNode = stack.pop();
+
+    //check current Node's left's height and right's height
+    const leftHeight = getHeight(poppedNode.left);
+    const rightHeight = getHeight(poppedNode.right);
+
+    //if difference is more than 1 return false
+    if (Math.abs(leftHeight - rightHeight) > 1) return false;
+
+    //Add current Node's children if there are
+    if (poppedNode.left !== null) {
+      stack.push(poppedNode.left)
+    }
+    if (poppedNode.right !== null) {
+      stack.push(poppedNode.right)
+    }
+  }
+  //if no unbalanced height, return true;
+  return true;
 }
 
 function countNodes (rootNode) {
-  // Your code here
+  if (rootNode === null) return 0;
+
+  let leftNodes = 0;
+  let rightNodes = 0;
+
+  if (rootNode.left) {
+    leftNodes = countNodes(rootNode.left);
+  }
+
+  if (rootNode.right) {
+    rightNodes = countNodes(rootNode.right);
+  }
+
+  return 1 + leftNodes + rightNodes;
 }
 
 function getParentNode (rootNode, target) {
-  // Your code here
+  //Base case - leaves' left and right
+  if(rootNode === null) return undefined;
+
+  //if parent(root) is the target, return null;
+  if(rootNode.val === target) return null;
+
+  //If current node's child is the target return the parentNode;
+  if(rootNode.right !== null && rootNode.right.val === target) return rootNode;
+  if(rootNode.left !== null && rootNode.left.val === target) return rootNode;
+
+  //recursively call the function on left and right subtrees and return if either side has the target or not.
+  return getParentNode(rootNode.left, target) || getParentNode(rootNode.right, target)
 }
 
 function inOrderPredecessor (rootNode, target) {
