@@ -104,23 +104,53 @@ function countNodes (rootNode) {
   return 1 + leftNodes + rightNodes;
 }
 
-function getParentNode (rootNode, target) {
+function getParentNode (rootNode, target, parent = null) {
   //Base case - leaves' left and right
   if(rootNode === null) return undefined;
 
   //if parent(root) is the target, return null;
-  if(rootNode.val === target) return null;
+  if(rootNode.val === target) return parent;
 
   //If current node's child is the target return the parentNode;
-  if(rootNode.right !== null && rootNode.right.val === target) return rootNode;
-  if(rootNode.left !== null && rootNode.left.val === target) return rootNode;
+  const leftParent = getParentNode(rootNode.left, target, rootNode);
+  if (leftParent) return leftParent;
 
   //recursively call the function on left and right subtrees and return if either side has the target or not.
-  return getParentNode(rootNode.left, target) || getParentNode(rootNode.right, target)
+  return getParentNode(rootNode.right, target, rootNode);
 }
+//Time complexity
+// Unbalaned tree (skewed binary tree aka linked list) - O(N)
+//balanced tree - O(logN)
+//Space complexity
+// O(H) - height of binary tree
 
 function inOrderPredecessor (rootNode, target) {
-  // Your code here
+
+  //if  starting node is first in-order node, return null;
+  if (target === findMinBST(rootNode)) return null;
+
+  //Get target's parent
+  const parentNode = getParentNode(rootNode, target);
+  console.log(target, parentNode)
+
+  //if parent is null, it means the target is the root; no parents)
+  if(parentNode === null) {
+    //check root's left Node
+    if(rootNode.left !== null) {
+      let curr = rootNode.left;
+
+      //check left's right child until number is larger than
+      while (curr.right !== null && curr.right.val < target) {
+      curr = curr.right;
+    }
+    return curr.val;
+    }
+  }
+  //if target has left child, return that
+  if (parentNode.right.left) return parentNode.right.left.val;
+
+  //else return parent
+  return parentNode.val;
 }
 
 function deleteNodeBST(rootNode, target) {
