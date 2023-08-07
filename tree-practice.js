@@ -130,8 +130,7 @@ function inOrderPredecessor (rootNode, target) {
   if (target === findMinBST(rootNode)) return null;
 
   //Get target's parent
-  const parentNode = getParentNode(rootNode, target);
-  console.log(target, parentNode)
+  const parentNode = getParentNode(rootNode, target)
 
   //if parent is null, it means the target is the root; no parents)
   if(parentNode === null) {
@@ -154,27 +153,123 @@ function inOrderPredecessor (rootNode, target) {
 }
 
 function deleteNodeBST(rootNode, target) {
-  // Do a traversal to find the node. Keep track of the parent
+        //     8
+    //       /   \
+    //      3     10
+    //    /   \     \
+    //   2     5     11
+    //  /    /  \     \
+    // 1    4    7    12
+    //          /      \
+    //         6       15
+    //                /
+    //              14
+  // If rootNode is empty
+  if(rootNode === null) return undefined;
 
-  // Undefined if the target cannot be found
+  // Do a traversal to find the node. Keep track of the parent
+  let parentNode = getParentNode(rootNode, target);
+
+  // Undefined if the target cannot be found (parentNode will be undefined)
+  if (parentNode === undefined) return undefined;
 
   // Set target based on parent
+  let targetNode = parentNode ? (parentNode.left && parentNode.left.val === target ? parentNode.left : parentNode.right) : rootNode;
 
-  // Case 0: Zero children and no parent:
-  //   return null
+  //if target node has no parent
+  // Target is the root with no children
+  if (targetNode === rootNode && targetNode.left === null && targetNode.right === null) {
+    return null;
+  }
 
+  //if target node has parent
   // Case 1: Zero children:
-  //   Set the parent that points to it to null
-
+  if (targetNode.left === null && targetNode.right === null) {
+    // Set the parent that points to it to null
+    parentNode.left === targetNode ? parentNode.left = null : parentNode.right = null;
   // Case 2: Two children:
-  //  Set the value to its in-order predecessor, then delete the predecessor
+  } else if (targetNode.left && targetNode.right) {
+    //  Set the value to its in-order predecessor, then delete the predecessor
+    let predecessorVal = inOrderPredecessor(rootNode, targetNode.val);
+    deleteNodeBST(rootNode, predecessorVal);
+    targetNode.val = predecessorVal;
+  } else {
+    // Case 3: One child:
+    //   Make the parent point to the child
+    let child = targetNode.left || targetNode.right;
+    parentNode.left === targetNode ? parentNode.left = child : parentNode.right = child;
+  }
+
+
+// //different version
+  // let parent = null;
+  // let current = rootNode;
+//   // Traverse the tree to find the target node and its parent
+//   while (current !== null && current.val !== target) {
+//     parent = current;
+//     if (target < current.val) {
+//       current = current.left;
+//     } else {
+//       current = current.right;
+//     }
+//   }
+
+//   // If target node is not found, return undefined
+//   if (current === null) {
+//     return undefined;
+//   }
+
+//   // Case 0: Zero children and no parent
+//   if (parent === null && current.left === null && current.right === null) {
+//     return null;
+//   }
+
+//   // Case 1: Zero children
+//   if (current.left === null && current.right === null) {
+//     if (parent.left === current) {
+//       parent.left = null;
+//     } else {
+//       parent.right = null;
+//     }
+//   }
+
+//   // Case 2: Two children
+//   //        4
+//     //    /   \
+//     //   2     6
+//     //  / \   / \
+//     // 1   3 5   7
+//   else if (current.left !== null && current.right !== null) {
   //  Replace target node with the left most child on its right side,
-  //  or the right most child on its left side.
-  //  Then delete the child that it was replaced with.
+    //  or the right most child on its left side.
+    //  Then delete the child that it was replaced with.
+//     let predecessor = current.left;
+//     let predecessorParent = current;
 
-  // Case 3: One child:
-  //   Make the parent point to the child
+//     while (predecessor.right !== null) {
+//       predecessorParent = predecessor;
+//       predecessor = predecessor.right;
+//     }
 
+//     current.val = predecessor.val;
+
+//     if (predecessorParent.left === predecessor) {
+//       predecessorParent.left = predecessor.left;
+//     } else {
+//       predecessorParent.right = predecessor.left;
+//     }
+//   }
+
+//   // Case 3: One child
+//   else {
+//     let child = current.left !== null ? current.left : current.right;
+
+//     if (parent.left === current) {
+//       parent.left = child;
+//     } else {
+//       parent.right = child;
+//     }
+//   }
 }
 
 module.exports = {
